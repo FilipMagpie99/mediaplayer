@@ -9,20 +9,20 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Margin="0,72,0,0">
+    <Grid Margin="0,72,0,0" Background="DarkGoldenrod">
         <Grid.RowDefinitions>
             <RowDefinition Height="67*"/>
             <RowDefinition Height="49*"/>
         </Grid.RowDefinitions>
-        <Button Content="Import" Margin="355,-49,0,0" VerticalAlignment="Top" Click="Button_ClickAsync"/>
+        <Button Content="Import" Margin="588,577,0,0" VerticalAlignment="Top" Click="Button_ClickAsync" Height="121" Grid.RowSpan="2" Width="191"/>
         <!--<controls:DataGrid x:Name="dataGrid"  Margin="16,0,57,67"/>-->
-        <TextBlock Name="lblStatus" HorizontalAlignment="Left" Margin="689,283,0,10" Grid.RowSpan="2" > Not playing...</TextBlock>
-        <Button Content="Play" Margin="507,458,0,0" VerticalAlignment="Top"  Click="Button_Click" RenderTransformOrigin="1.049,-0.764" />
-        <Button Content="Pause" Margin="572,458,0,0" VerticalAlignment="Top"  Click="Button_Click_3" />
-        <ListView x:Name="listView" Margin="0,13,1452,78">
+        <TextBlock Name="lblStatus" HorizontalAlignment="Left" Margin="855,504,0,279"  FontSize="36" Grid.RowSpan="2" Width="329" > Not playing...</TextBlock>
+        <Button Name="Play" Content="Play" Margin="826,577,0,0" VerticalAlignment="Top" Visibility="Visible" Click="Button_Click" RenderTransformOrigin="1.049,-0.764" Height="120" Grid.RowSpan="2" Width="191" />
+        <Button Name="Pause" Content="Pause" Margin="826,578,0,0" VerticalAlignment="Top"  Click="Button_Click_3" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
+        <ListView x:Name="listView" Margin="588,87,638,128" Background="Goldenrod">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="x:String">
-                    <Grid Background="Yellow">
+                    <Grid Background="LightGoldenrodYellow">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
@@ -35,5 +35,6 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+        <TextBlock HorizontalAlignment="Left" Margin="588,0,0,0" TextWrapping="Wrap" Text="Definitely not a Spotify" VerticalAlignment="Top" FontSize="60" FontFamily="Comic Sans MS" Width="703" Height="94" />
     </Grid>
 </Page>

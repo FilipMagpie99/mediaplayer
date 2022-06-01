@@ -1,26 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage.Pickers;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using Windows.Media.Playback;
 using Windows.Storage;
-using Newtonsoft.Json;
-using System.Threading;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using Windows.Storage.AccessCache;
+using Windows.Storage.Pickers;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 //Szablon elementu Pusta strona jest udokumentowany na stronie https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x415
 
 namespace mediaplayer
@@ -34,7 +22,7 @@ namespace mediaplayer
         private readonly string saveFileName = ".\\mp3.json";
         private ICollection<string> playerNames = new HashSet<string>();
         private ViewModel viewModel = new ViewModel();
-        
+
 
         public class ViewModel
         {
@@ -53,7 +41,8 @@ namespace mediaplayer
                 }
             }
             listView.ItemsSource = viewModel.audioTracks;
-            viewModel.audioTracks.CollectionChanged += AudioTracks_CollectionChanged; ;
+            viewModel.audioTracks.CollectionChanged += AudioTracks_CollectionChanged;
+
 
 
         }
@@ -90,7 +79,7 @@ namespace mediaplayer
                 mediaPlayer.Play();
                 DispatcherTimer timer = new DispatcherTimer();
                 timer.Interval = TimeSpan.FromSeconds(1);
-                timer.Tick += timer_Tick; 
+                timer.Tick += timer_Tick;
                 timer.Start();
             }
 
@@ -112,7 +101,7 @@ namespace mediaplayer
             if (mediaPlayer.GetAsCastingSource() != null)
                 lblStatus.Text = String.Format("{0} / {1}", mediaPlayer.Position.ToString(@"mm\:ss"), mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss"));
             else
-                lblStatus.Text= "No file selected...";
+                lblStatus.Text = "No file selected...";
         }
 
 
@@ -120,28 +109,35 @@ namespace mediaplayer
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             mediaPlayer.Play();
+            Play.Visibility = Visibility.Collapsed;
+            Pause.Visibility = Visibility.Visible;
+
         }
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             mediaPlayer.Pause();
+            Pause.Visibility = Visibility.Collapsed;
+            Play.Visibility = Visibility.Visible;
         }
 
         private async void TextBlock_Tapped(object sender, TappedRoutedEventArgs e)
         {
             StorageFile file = await StorageFile.GetFileFromPathAsync(((TextBlock)sender).Text);
-            
+
             if (file != null)
             {
                 string faToken = StorageApplicationPermissions.FutureAccessList.Add(file);
                 mediaPlayer.SetFileSource(await StorageApplicationPermissions.FutureAccessList.GetFileAsync(faToken));
-                mediaPlayer.Play();
+
                 DispatcherTimer timer = new DispatcherTimer();
                 timer.Interval = TimeSpan.FromSeconds(1);
                 timer.Tick += timer_Tick;
                 timer.Start();
             }
-            
+            mediaPlayer.Play();
         }
+
+
     }
 }
