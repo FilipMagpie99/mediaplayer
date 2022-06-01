@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="mediaplayer.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:mediaplayer"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Margin="0,72,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="67*"/>
+            <RowDefinition Height="49*"/>
+        </Grid.RowDefinitions>
+        <Button Content="Import" Margin="355,-49,0,0" VerticalAlignment="Top" Click="Button_ClickAsync"/>
+        <!--<controls:DataGrid x:Name="dataGrid"  Margin="16,0,57,67"/>-->
+        <TextBlock Name="lblStatus" HorizontalAlignment="Left" Margin="689,283,0,10" Grid.RowSpan="2" > Not playing...</TextBlock>
+        <Button Content="Play" Margin="507,458,0,0" VerticalAlignment="Top"  Click="Button_Click" RenderTransformOrigin="1.049,-0.764" />
+        <Button Content="Pause" Margin="572,458,0,0" VerticalAlignment="Top"  Click="Button_Click_3" />
+        <ListView x:Name="listView" Margin="0,13,1452,78">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <Grid Background="Yellow">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{x:Bind}" Foreground="Black"
+                           FontSize="14" Grid.Column="0"
+                           VerticalAlignment="Stretch"
+                           Tapped="TextBlock_Tapped"
+                           Padding="0,0,54,0"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>
