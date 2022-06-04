@@ -16,25 +16,35 @@
         </Grid.RowDefinitions>
         <Button Content="Import" Margin="588,577,0,0" VerticalAlignment="Top" Click="Button_ClickAsync" Height="121" Grid.RowSpan="2" Width="191"/>
         <!--<controls:DataGrid x:Name="dataGrid"  Margin="16,0,57,67"/>-->
-        <TextBlock Name="lblStatus" HorizontalAlignment="Left" Margin="855,504,0,279"  FontSize="36" Grid.RowSpan="2" Width="329" > Not playing...</TextBlock>
+        <TextBlock Name="lblStatus" HorizontalAlignment="Left" Margin="215,88,0,268"  FontSize="36" Width="329" > Not playing...</TextBlock>
         <Button Name="Play" Content="Play" Margin="826,577,0,0" VerticalAlignment="Top" Visibility="Visible" Click="Button_Click" RenderTransformOrigin="1.049,-0.764" Height="120" Grid.RowSpan="2" Width="191" />
         <Button Name="Pause" Content="Pause" Margin="826,578,0,0" VerticalAlignment="Top"  Click="Button_Click_3" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
-        <ListView x:Name="listView" Margin="588,87,638,128" Background="Goldenrod">
+        <ListView x:Name="listView" Tapped="listView_Tapped" Margin="588,87,638,128" Background="Goldenrod">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="x:String">
-                    <Grid Background="LightGoldenrodYellow">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{x:Bind}" Foreground="Black"
-                           FontSize="14" Grid.Column="0"
-                           VerticalAlignment="Stretch"
-                           Tapped="TextBlock_Tapped"
-                           Padding="0,0,54,0"/>
-                    </Grid>
+                <DataTemplate x:DataType="local:MySong">
+                    <StackPanel Orientation="Horizontal" Height="64">
+                        <Image Height="48" Width="48" Source="{x:Bind ImagePath}"/>
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
+                            <TextBlock Text="{x:Bind Name}" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                            <TextBlock Text="{x:Bind PathName}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                        </StackPanel>
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
         <TextBlock HorizontalAlignment="Left" Margin="588,0,0,0" TextWrapping="Wrap" Text="Definitely not a Spotify" VerticalAlignment="Top" FontSize="60" FontFamily="Comic Sans MS" Width="703" Height="94" />
+
+        <Popup x:Name="popup" IsOpen="False">
+            <StackPanel Background="LightBlue" Margin="588,0,0,0" Width="403" Height="312" RenderTransformOrigin="0.484,0.548">
+                <TextBlock>Nazwa utworu</TextBlock>
+                <TextBox x:Name="nazwaUtworu"></TextBox>
+                <TextBlock>Wybierz plik</TextBlock>
+                <!--<Button Content="Import" Margin="588,577,0,0" VerticalAlignment="Top" Click="Button_ClickAsync" Height="121" Grid.RowSpan="2" Width="191"/>-->
+                <Button x:Name="importSong" Click="importSong_Click">Import Song</Button>
+                <TextBlock>Wybierz obraz</TextBlock>
+                <Button x:Name="importImage" Click="importImage_Click">Import Song</Button>
+                <Button x:Name="closeImport" Click="closeImport_Click">Zakoncz</Button>
+            </StackPanel>
+        </Popup>
     </Grid>
 </Page>
