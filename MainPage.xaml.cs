@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
@@ -9,6 +12,7 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Imaging;
 //Szablon elementu Pusta strona jest udokumentowany na stronie https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x415
 
 namespace mediaplayer
@@ -28,6 +32,7 @@ namespace mediaplayer
         private List<string> playerPathIsoSto = new List<string>();
         private List<string> playerImageIsoSto = new List<string>();
         private ViewModel viewModel = new ViewModel();
+        MySong selectedSong;
         //List<MySong> songLists = new List<MySong>();
 
 
@@ -40,6 +45,7 @@ namespace mediaplayer
         }
         public MainPage()
         {
+
             this.InitializeComponent();
             //dataGrid.ItemsSource = viewModel.audioTracks;
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("listaPiosenek")
@@ -47,26 +53,25 @@ namespace mediaplayer
             {
                 List<string> nameses = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["listaPiosenek"]);
                 List<string> pathes = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["listaSciezek"]);
+                List<string> imagess = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["obrazy"]);
+
+                //imagess.Clear();
+                //pathes.Clear();
+                //nameses.Clear();
+               
+                
+
                 for (int i = 0; i < nameses.Count; i++)
                 {
                     var song = nameses[i];
                     var path = pathes[i];
+                    var imagepaths = imagess[i];
                     playerNamesIsoSto.Add(song);
                     playerPathIsoSto.Add(path);
-                    viewModel.songLists.Add(new MySong(song, path, "Assets/white2115.jpg"));
+                    playerImageIsoSto.Add(imagepaths);
+                    viewModel.songLists.Add(new MySong(song, path, imagepaths));
                 }
-                /*
-                foreach (var item in JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["listaPiosenek"]))
-                {
-                    playerNamesIsoSto.Add(item);
-                    viewModel.songLists.Add(new MySong(item, item, "Assets/white2115.jpg"));
-                }
-                foreach (var item in JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["listaSciezek"]))
-                {
-                    playerPathIsoSto.Add(item);
-                    viewModel.songLists.Add(new MySong(item, item, "Assets/white2115.jpg"));
-                }
-                */
+
             }
             listView.ItemsSource = viewModel.songLists;
             viewModel.songLists.CollectionChanged += AudioTracks_CollectionChanged;
@@ -77,30 +82,53 @@ namespace mediaplayer
             Save_songs();
         }
 
+        private BitmapSource getImage()
+        {
+            var wb = new WriteableBitmap(20, 20);
+            var imageArray = new byte[wb.PixelWidth * wb.PixelHeight * 4];
+            for (int i = 0; i < imageArray.Length; i += 4)
+            {
+                //BGRA format
+                imageArray[i] = 0; // Blue
+                imageArray[i + 1] = 0;  // Green
+                imageArray[i + 2] = 255; // Red
+                imageArray[i + 3] = 255; // Alpha
+            }
+
+            using (Stream stream = wb.PixelBuffer.AsStream())
+            {
+                //write to bitmap
+                stream.Write(imageArray, 0, imageArray.Length);
+            }
+
+            return wb;
+        }
+
         private void RefreshDataGrid()
         {
-            //viewModel.songLists.Clear();
+
 
             //foreach (string playerName in playerNames)
             //{
             //viewModel.audioTracks.Add(playerName);
             //viewModel.songLists.Add(new MySong(playerName, playerName, "Assets/white2115.jpg"));
             //}
-            if(playerNames!=null && playerPath != null)
+            if (playerNames != null && playerPath != null)
             {
                 playerNamesIsoSto.Add(playerNames);
                 playerPathIsoSto.Add(playerPath);
                 playerImageIsoSto.Add(imagePath);
-                viewModel.songLists.Add(new MySong(playerNames, playerPath, "Assets/white2115.jpg"));
+                viewModel.songLists.Add(new MySong(playerNames, playerPath, imagePath));
                 playerNames = null;
                 playerPath = null;
+                imagePath = null;
             }
-            
-            
+
+
             //playerNames.ForEach(names => playerNamesIsoSto.Add(names));
             //playerNames.Clear();
             //playerPath.Clear();
-            
+
         }
         private async void Button_ClickAsync(object sender, RoutedEventArgs e)
         {
@@ -132,9 +160,12 @@ namespace mediaplayer
             StorageFile file = await openPicker.PickSingleFileAsync();
             if (file != null)
             {
-                imagePath = file.Path;
-                //playerPath.Add(file.Path);
+                await file.CopyAsync(ApplicationData.Current.LocalFolder);
+                // Application now has read/write access to the picked file
+                String a = "ms-appdata:///local/" + file.Name;
+                imagePath = a;
             }
+
         }
         private void closeImport_Click(object sender, RoutedEventArgs e)
         {
@@ -151,7 +182,7 @@ namespace mediaplayer
         {
             ApplicationData.Current.LocalSettings.Values["listaPiosenek"] = JsonConvert.SerializeObject(playerNamesIsoSto);
             ApplicationData.Current.LocalSettings.Values["listaSciezek"] = JsonConvert.SerializeObject(playerPathIsoSto);
-            ApplicationData.Current.LocalSettings.Values["obrazy"] = JsonConvert.SerializeObject(playerNames);
+            ApplicationData.Current.LocalSettings.Values["obrazy"] = JsonConvert.SerializeObject(playerImageIsoSto);
             //Debug.WriteLine(JsonConvert.SerializeObject(playerNames));
 
         }
@@ -199,21 +230,35 @@ namespace mediaplayer
         */
         private async void listView_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var selectedSong = listView.SelectedItem as MySong;
-
+            lblStatus.Visibility = Visibility.Visible;
+            selectedSong = listView.SelectedItem as MySong;
+            Delete.Visibility = Visibility.Visible;
             StorageFile file = await StorageFile.GetFileFromPathAsync(selectedSong.PathName);
 
             if (file != null)
             {
                 string faToken = StorageApplicationPermissions.FutureAccessList.Add(file);
                 mediaPlayer.SetFileSource(await StorageApplicationPermissions.FutureAccessList.GetFileAsync(faToken));
-
                 DispatcherTimer timer = new DispatcherTimer();
                 timer.Interval = TimeSpan.FromSeconds(1);
                 timer.Tick += timer_Tick;
                 timer.Start();
             }
             mediaPlayer.Play();
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            //foreach(var song in viewModel.songLists) { 
+                //if(song == selectedSong)
+            
+            viewModel.songLists.Remove(selectedSong);
+            playerImageIsoSto.Remove(selectedSong.ImagePath);
+            playerNamesIsoSto.Remove(selectedSong.Name);
+            playerPathIsoSto.Remove(selectedSong.PathName);
+            mediaPlayer.Pause();
+            lblStatus.Visibility = Visibility.Collapsed;
+            Save_songs();
         }
     }
 }
