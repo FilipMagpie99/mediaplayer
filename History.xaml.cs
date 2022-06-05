@@ -33,10 +33,7 @@ namespace mediaplayer
 
         public class ViewModel
         {
-            //public ObservableCollection<string> audioTracks { get; set; } = new ObservableCollection<string>(); //{ new Obiekt { Nazwa = "a" }, new Obiekt { Nazwa = "b" } };
-            public ObservableCollection<Record> ListenedSongs { get; set; } = new ObservableCollection<Record>(); //{ new Obiekt { Nazwa = "a" }, new Obiekt { Nazwa = "b" } };
-
-
+            public ObservableCollection<Record> ListenedSongs { get; set; } = new ObservableCollection<Record>();
         }
         public History()
         {
@@ -49,5 +46,9 @@ namespace mediaplayer
 
         }
 
+        private void Music_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(MainPage));
+        }
     }
 }
