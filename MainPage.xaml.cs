@@ -294,20 +294,7 @@ namespace mediaplayer
             listView.ItemsSource = cont;
         }
         
-        private void Next_Click(object sender, RoutedEventArgs e)
-        {
-            if(listView.SelectedIndex < viewModel.filteredSongList.Count()-1)
-            {
-                listView.SelectedIndex++;
-                mediaPlayer.Play();
-            }
-            else if(listView.SelectedIndex == viewModel.filteredSongList.Count())
-            {
-                listView.SelectedIndex = 0;
-                mediaPlayer.Play();
-            }
-            
-        }
+
 
 
     }

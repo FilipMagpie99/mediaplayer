@@ -15,7 +15,7 @@
 
         </Grid.RowDefinitions>
         <StackPanel>
-            <ListView Height="400" Width="1000" x:Name="listView" Background="LightGray">
+            <ListView Height="400" Width="1000" x:Name="listView" Background="#0f0e0e">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local:Record" >
                         <StackPanel Orientation="Horizontal" Height="64">
