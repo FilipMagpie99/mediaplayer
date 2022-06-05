@@ -9,6 +9,7 @@ namespace mediaplayer
 {
     public class MySong
     {
+        public Guid Id = Guid.NewGuid();    
         public string Name { get; set; }
         public string PathName { get; set; }
         public string ImagePath { get; set; }

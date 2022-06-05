@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -28,10 +29,11 @@ namespace mediaplayer
         private string playerNames = null;
         //private List<string> playerNames = new List<string>();
         private string playerPath = null;
-        private string imagePath = null;
+        private string imagePath = "Assets/StoreLogo.png";
         private List<string> playerNamesIsoSto = new List<string>();
-        private List<string> playerPathIsoSto = new List<string>();
+        private HashSet<string> playerPathIsoSto = new HashSet<string>();
         private List<string> playerImageIsoSto = new List<string>();
+        private List<string> historiaOdtwarzania = new List<string>();
         private ViewModel viewModel = new ViewModel();
 
         
@@ -58,9 +60,9 @@ namespace mediaplayer
                 List<string> pathes = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["listaSciezek"]);
                 List<string> imagess = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["obrazy"]);
 
-                //imagess.Clear();
-                //pathes.Clear();
-                //nameses.Clear();
+                imagess.Clear();
+                pathes.Clear();
+               nameses.Clear();
                
                 
 
@@ -162,6 +164,7 @@ namespace mediaplayer
 
             StorageFile file = await openPicker.PickSingleFileAsync();
             if (file != null)
+                
             {
                 String a;
                 if (await IsFilePresent(file.Name))
@@ -176,6 +179,7 @@ namespace mediaplayer
                 imagePath = a;
                 
             }
+
             
 
         }
@@ -248,9 +252,10 @@ namespace mediaplayer
         */
         private async void listView_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            lblStatus.Visibility = Visibility.Visible;
             if (listView.SelectedItems.Count != 0)
             {
-                lblStatus.Visibility = Visibility.Visible;
+                
                 selectedSong = listView.SelectedItem as MySong;
                 Delete.Visibility = Visibility.Visible;
                 StorageFile file = await StorageFile.GetFileFromPathAsync(selectedSong.PathName);
@@ -264,8 +269,13 @@ namespace mediaplayer
                     timer.Tick += timer_Tick;
                     timer.Start();
                 }
-            }
             mediaPlayer.Play();
+            if (historiaOdtwarzania.Count() != 0 && selectedSong.PathName.Equals(historiaOdtwarzania.Last())){
+                historiaOdtwarzania.Add(selectedSong.Name);
+            }
+            }
+            
+            
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
