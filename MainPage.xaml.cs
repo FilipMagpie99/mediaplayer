@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
@@ -32,6 +33,8 @@ namespace mediaplayer
         private List<string> playerPathIsoSto = new List<string>();
         private List<string> playerImageIsoSto = new List<string>();
         private ViewModel viewModel = new ViewModel();
+
+        
         MySong selectedSong;
         //List<MySong> songLists = new List<MySong>();
 
@@ -160,13 +163,28 @@ namespace mediaplayer
             StorageFile file = await openPicker.PickSingleFileAsync();
             if (file != null)
             {
-                await file.CopyAsync(ApplicationData.Current.LocalFolder);
-                // Application now has read/write access to the picked file
-                String a = "ms-appdata:///local/" + file.Name;
+                String a;
+                if (await IsFilePresent(file.Name))
+                {
+                    a = "ms-appdata:///local/" + file.Name;
+                }
+                else
+                {
+                    await file.CopyAsync(ApplicationData.Current.LocalFolder);
+                }
+                a = "ms-appdata:///local/" + file.Name;
                 imagePath = a;
+                
             }
+            
 
         }
+        public async Task<bool> IsFilePresent(string fileName)
+        {
+            var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName);
+            return item != null;
+        }        
+  
         private void closeImport_Click(object sender, RoutedEventArgs e)
         {
             playerNames = nazwaUtworu.Text;
@@ -230,19 +248,22 @@ namespace mediaplayer
         */
         private async void listView_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            lblStatus.Visibility = Visibility.Visible;
-            selectedSong = listView.SelectedItem as MySong;
-            Delete.Visibility = Visibility.Visible;
-            StorageFile file = await StorageFile.GetFileFromPathAsync(selectedSong.PathName);
-
-            if (file != null)
+            if (listView.SelectedItems.Count != 0)
             {
-                string faToken = StorageApplicationPermissions.FutureAccessList.Add(file);
-                mediaPlayer.SetFileSource(await StorageApplicationPermissions.FutureAccessList.GetFileAsync(faToken));
-                DispatcherTimer timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(1);
-                timer.Tick += timer_Tick;
-                timer.Start();
+                lblStatus.Visibility = Visibility.Visible;
+                selectedSong = listView.SelectedItem as MySong;
+                Delete.Visibility = Visibility.Visible;
+                StorageFile file = await StorageFile.GetFileFromPathAsync(selectedSong.PathName);
+
+                if (file != null)
+                {
+                    string faToken = StorageApplicationPermissions.FutureAccessList.Add(file);
+                    mediaPlayer.SetFileSource(await StorageApplicationPermissions.FutureAccessList.GetFileAsync(faToken));
+                    DispatcherTimer timer = new DispatcherTimer();
+                    timer.Interval = TimeSpan.FromSeconds(1);
+                    timer.Tick += timer_Tick;
+                    timer.Start();
+                }
             }
             mediaPlayer.Play();
         }
