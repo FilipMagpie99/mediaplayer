@@ -20,6 +20,8 @@
         <Button Name="Play" Content="Play" Margin="826,507,0,0" VerticalAlignment="Top" Visibility="Visible" Click="Play_Click" RenderTransformOrigin="1.049,-0.764" Height="120" Grid.RowSpan="2" Width="191" />
         <Button Name="Pause" Content="Pause" Margin="826,507,0,0" VerticalAlignment="Top"  Click="Pause_Click" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
         <Button Name="Delete" Content="Delete" Margin="1066,507,0,0" VerticalAlignment="Top"  Click="Delete_Click" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
+        <TextBox x:Name="sbar"  TextChanged="sbar_TextChanged" PlaceholderText="Enter the item to search" Margin="40,10,997,354"/>
+        <Button Content="Search" Width="400"  Click="Search_Click" HorizontalAlignment="Stretch" Margin="40,89,1060,0" VerticalAlignment="Top"/>
         <ListView  x:Name="listView" SelectionChanged="listView_SelectionChanged"  Margin="588,87,244,128" Background="LightGray">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:MySong">

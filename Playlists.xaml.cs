@@ -29,6 +29,7 @@ namespace mediaplayer
     {
         private string playlistName = null;
         private string coverPath = "Assets/StoreLogo.png";
+        private List<string> playlistIdSave = new List<string>();
         private List<string> playlistNameSave = new List<string>();
         private List<string> coverPathSave = new List<string>();
         private ViewModel viewModel = new ViewModel();
@@ -42,10 +43,13 @@ namespace mediaplayer
         {
             this.InitializeComponent();
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("playlists")
-                && ApplicationData.Current.LocalSettings.Values.ContainsKey("covers"))
+                && ApplicationData.Current.LocalSettings.Values.ContainsKey("covers")
+                && ApplicationData.Current.LocalSettings.Values.ContainsKey("playlistID"))
             {
                 List<string> nameses = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["playlists"]);
                 List<string> images = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["covers"]);
+                List<string> idplaylists = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["playlistID"]);
+
                 //nameses.Clear();
                 //imagess.Clear();    
 
@@ -53,9 +57,11 @@ namespace mediaplayer
                 {
                     var name = nameses[i];
                     var image = images[i];
+                    var playlistids = idplaylists[i];
                     playlistNameSave.Add(name);
                     coverPathSave.Add(image);
-                    viewModel.playLists.Add(new Playlist(name, image));
+                    playlistIdSave.Add(playlistids);
+                    viewModel.playLists.Add(new Playlist(playlistids,name, image));
                 }
             }
             listView.ItemsSource = viewModel.playLists;
@@ -69,6 +75,7 @@ namespace mediaplayer
 
         private void Save_playlist()
         {
+            ApplicationData.Current.LocalSettings.Values["playlistID"] = JsonConvert.SerializeObject(playlistNameSave);
             ApplicationData.Current.LocalSettings.Values["playlists"] = JsonConvert.SerializeObject(playlistNameSave);
             ApplicationData.Current.LocalSettings.Values["covers"] = JsonConvert.SerializeObject(coverPathSave);
         }
@@ -77,9 +84,11 @@ namespace mediaplayer
         {
             if (playlistName != null)
             {
+                string Id = Guid.NewGuid().ToString();
                 playlistNameSave.Add(playlistName);
                 coverPathSave.Add(coverPath);
-                viewModel.playLists.Add(new Playlist(playlistName, coverPath));
+                playlistIdSave.Add(Id);
+                viewModel.playLists.Add(new Playlist(Id,playlistName, coverPath));
                 playlistName = null;
                 coverPath = null;
             }
@@ -89,6 +98,7 @@ namespace mediaplayer
         {
             playlistNameSave.Remove(selectedPlaylist.Name);
             coverPathSave.Remove(selectedPlaylist.ImagePath);
+            playlistIdSave.Remove(selectedPlaylist.PlaylistId);
             viewModel.playLists.Remove(selectedPlaylist);
         }
 

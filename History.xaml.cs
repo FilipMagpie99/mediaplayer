@@ -48,7 +48,7 @@ namespace mediaplayer
 
         private void Music_Click(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(MainPage));
+            Frame.Navigate(typeof(Playlists));
         }
     }
 }

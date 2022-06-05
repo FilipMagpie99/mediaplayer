@@ -38,6 +38,7 @@ namespace mediaplayer
         bool czyPauza = true;
         private ViewModel viewModel = new ViewModel();        
         MySong selectedSong;
+        ObservableCollection<MySong> searchSongs = new ObservableCollection<MySong>();
 
         public class ViewModel
         {
@@ -61,8 +62,7 @@ namespace mediaplayer
                 //nameses.Clear();
                 //pathes.Clear();
                 //imagess.Clear();
-                //pla
-
+                //playlistID.Clear();
                 for (int i = 0; i < nameses.Count; i++)
                 {
                     var song = nameses[i];
@@ -76,7 +76,6 @@ namespace mediaplayer
                     viewModel.songLists.Add(new MySong(song, path, image, IdPlaylist));
                 }
             }
-            viewModel.filteredSongList = viewModel.songLists;
             foreach (MySong song in viewModel.songLists)
             {
                 if (song.playlistId.Equals(Playlists.selectedPlaylist.PlaylistId))
@@ -86,7 +85,8 @@ namespace mediaplayer
             }
             
             listView.ItemsSource = viewModel.filteredSongList;
-            viewModel.songLists.CollectionChanged += AudioTracks_CollectionChanged;
+            viewModel.filteredSongList.CollectionChanged += AudioTracks_CollectionChanged;
+            searchSongs = viewModel.filteredSongList;
         }
         private void AudioTracks_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
@@ -109,6 +109,7 @@ namespace mediaplayer
                 playerPathIsoSto.Add(playerPath);
                 playerImageIsoSto.Add(imagePath);
                 playerPlaylistSave.Add(Playlists.selectedPlaylist.PlaylistId);
+                viewModel.filteredSongList.Add(new MySong(playerNames, playerPath, imagePath, Playlists.selectedPlaylist.PlaylistId));
                 viewModel.songLists.Add(new MySong(playerNames, playerPath, imagePath, Playlists.selectedPlaylist.PlaylistId));
                 playerNames = null;
                 playerPath = null;
@@ -180,12 +181,12 @@ namespace mediaplayer
             if (mediaPlayer.GetAsCastingSource() != null)
             { 
                 lblStatus.Text = String.Format("{0} / {1}", mediaPlayer.Position.ToString(@"mm\:ss"), mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss"));
-                if (mediaPlayer.Position.ToString(@"mm\:ss").Equals(mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss")) && listView.SelectedIndex <= viewModel.songLists.Count())
+                if (mediaPlayer.Position.ToString(@"mm\:ss").Equals(mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss")) && listView.SelectedIndex < viewModel.filteredSongList.Count() -1)
                 {
-                    if (czyShuffle != true && listView.SelectedIndex < viewModel.songLists.Count() - 1)
-                        listView.SelectedItem = viewModel.songLists[listView.SelectedIndex + 1];
+                    if (czyShuffle != true)
+                        listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex + 1];
                     else
-                        listView.SelectedItem = viewModel.songLists[listView.SelectedIndex + rnd.Next(-listView.SelectedIndex, viewModel.songLists.Count()-listView.SelectedIndex)];
+                        listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex + rnd.Next(-listView.SelectedIndex, viewModel.filteredSongList.Count()-listView.SelectedIndex)];
                     OdtwarzanieMuzyki();
                 }
                 if(czyPauza == false)
@@ -215,13 +216,7 @@ namespace mediaplayer
             Play.Visibility = Visibility.Visible;
             czyPauza = true;
         }
-        /*
-        private  void listView_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            OdtwarzanieMuzyki();
-            mediaPlayer.Play();  
-        }
-        */
+
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             OdtwarzanieMuzyki();
@@ -230,7 +225,6 @@ namespace mediaplayer
 
         private async void OdtwarzanieMuzyki()
         {
-            //mediaPlayer.Pause();
             mediaPlayer.Play();
             lblStatus.Visibility = Visibility.Visible;
             if (listView.SelectedItems.Count != 0)
@@ -257,14 +251,15 @@ namespace mediaplayer
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {   
-            viewModel.songLists.Remove(selectedSong);
             playerImageIsoSto.Remove(selectedSong.ImagePath);
             playerNamesIsoSto.Remove(selectedSong.Name);
             playerPathIsoSto.Remove(selectedSong.PathName);
             playerPlaylistSave.Remove(selectedSong.playlistId);
+            viewModel.songLists.Remove(selectedSong);
+            viewModel.filteredSongList.Remove(selectedSong);
             mediaPlayer.Pause();
             lblStatus.Visibility = Visibility.Collapsed;
-            Save_songs();
+            //Save_songs();
         }
 
         private void HistoryNav_Click(object sender, RoutedEventArgs e)
@@ -286,11 +281,34 @@ namespace mediaplayer
             czyShuffle = false;
         }
 
-        private void Next_Click(object sender, RoutedEventArgs e)
+        private void sbar_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //mediaPlayer.Position = mediaPlayer.NaturalDuration.Duration();
+            listView.ItemsSource = searchSongs;
+
         }
 
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            var cont = from s in searchSongs where s.Name.Contains(sbar.Text) select s;//LINQ Query 
+
+            listView.ItemsSource = cont;
+        }
         
+        private void Next_Click(object sender, RoutedEventArgs e)
+        {
+            if(listView.SelectedIndex < viewModel.filteredSongList.Count()-1)
+            {
+                listView.SelectedIndex++;
+                mediaPlayer.Play();
+            }
+            else if(listView.SelectedIndex == viewModel.filteredSongList.Count())
+            {
+                listView.SelectedIndex = 0;
+                mediaPlayer.Play();
+            }
+            
+        }
+
+
     }
 }

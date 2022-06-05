@@ -8,7 +8,7 @@ namespace mediaplayer
 {
     public class Playlist
     {
-        public string PlaylistId = Guid.NewGuid().ToString();
+        public string PlaylistId { get; set; }
         public string Name { get; set; }
         public string ImagePath { get; set; }
         List<MySong> mySongs { get; set; } = new List<MySong>();
@@ -17,8 +17,9 @@ namespace mediaplayer
         {
         }
 
-        public Playlist(string name, string imagePath)
+        public Playlist(string playId,  string name, string imagePath)
         {
+            this.PlaylistId = playId;
             this.Name = name;
             this.ImagePath = imagePath;
         }
