@@ -31,10 +31,11 @@ namespace mediaplayer
         private string playerPath = null;
         private string imagePath = "Assets/StoreLogo.png";
         private List<string> playerNamesIsoSto = new List<string>();
-        private HashSet<string> playerPathIsoSto = new HashSet<string>();
+        private List<string> playerPathIsoSto = new List<string>();
         private List<string> playerImageIsoSto = new List<string>();
         //private List<string> historiaOdtwarzania = new List<string>();
-
+        Random rnd = new Random();
+        bool czyShuffle =false;
         private ViewModel viewModel = new ViewModel();
 
         
@@ -61,8 +62,10 @@ namespace mediaplayer
                 List<string> pathes = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["listaSciezek"]);
                 List<string> imagess = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["obrazy"]);
 
-
-               
+                //nameses.Clear();
+                //pathes.Clear();
+                //imagess.Clear();    
+     
                 
 
                 for (int i = 0; i < nameses.Count; i++)
@@ -207,12 +210,32 @@ namespace mediaplayer
             //Debug.WriteLine(JsonConvert.SerializeObject(playerNames));
 
         }
-        void timer_Tick(object sender, object e)
+        async void  timer_Tick(object sender, object e)
         {
             if (mediaPlayer.GetAsCastingSource() != null)
+            { 
+
                 lblStatus.Text = String.Format("{0} / {1}", mediaPlayer.Position.ToString(@"mm\:ss"), mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss"));
+                if (mediaPlayer.Position.ToString(@"mm\:ss").Equals(mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss")) && listView.SelectedIndex < viewModel.songLists.Count())
+                {
+                    if (czyShuffle != true)
+                    {
+                        listView.SelectedItem = viewModel.songLists[listView.SelectedIndex + 1];
+                        
+                    }
+                    else
+                    {
+                        listView.SelectedItem = viewModel.songLists[listView.SelectedIndex + rnd.Next(-listView.SelectedIndex, viewModel.songLists.Count()-listView.SelectedIndex)];
+                       
+                    }
+                    OdtwarzanieMuzyki();
+                }
+                mediaPlayer.Play();
+            }
             else
+            {
                 lblStatus.Text = "No file selected...";
+            }
         }
 
 
@@ -252,12 +275,19 @@ namespace mediaplayer
             mediaPlayer.Play();
         }
         */
-        private async void listView_Tapped(object sender, TappedRoutedEventArgs e)
+        private  void listView_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+            OdtwarzanieMuzyki();
+            mediaPlayer.Play();
+           
+        }
+        private async void OdtwarzanieMuzyki()
         {
             lblStatus.Visibility = Visibility.Visible;
             if (listView.SelectedItems.Count != 0)
             {
-                
+                DispatcherTimer timer = new DispatcherTimer();
                 selectedSong = listView.SelectedItem as MySong;
                 Delete.Visibility = Visibility.Visible;
                 StorageFile file = await StorageFile.GetFileFromPathAsync(selectedSong.PathName);
@@ -266,19 +296,21 @@ namespace mediaplayer
                 {
                     string faToken = StorageApplicationPermissions.FutureAccessList.Add(file);
                     mediaPlayer.SetFileSource(await StorageApplicationPermissions.FutureAccessList.GetFileAsync(faToken));
-                    DispatcherTimer timer = new DispatcherTimer();
+
                     timer.Interval = TimeSpan.FromSeconds(1);
                     timer.Tick += timer_Tick;
                     timer.Start();
                 }
-            mediaPlayer.Play();
-            if (Listened.historiaOdtwarzania.Count() != 0 && selectedSong.PathName.Equals(Listened.historiaOdtwarzania.Last())){
+
+                //if (Listened.historiaOdtwarzania.Count() != 0 && selectedSong.PathName.Equals(Listened.historiaOdtwarzania.Last())){
                 Listened.historiaOdtwarzania.Add(selectedSong.Name);
-                    Listened.kiedyOdtwarzane.Add(DateTime.Now);
+                Listened.kiedyOdtwarzane.Add(DateTime.Now);
+
+
+
+
+                //}
             }
-            }
-            
-            
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -299,5 +331,17 @@ namespace mediaplayer
         {
             Frame.Navigate(typeof(History));
         }
+
+        private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
+        {
+            czyShuffle = true;
+        }
+
+        private void AppBarButton_Click_2(object sender, RoutedEventArgs e)
+        {
+            czyShuffle = false;
+        }
+
+
     }
 }

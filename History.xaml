@@ -15,14 +15,14 @@
 
         </Grid.RowDefinitions>
         <StackPanel>
-            <ListView Height="400" Width="1000" x:Name="listView" Background="Black">
+            <ListView Height="400" Width="1000" x:Name="listView" Background="Green">
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:Listened" >
+                    <DataTemplate x:DataType="local:Record" >
                         <StackPanel Orientation="Horizontal" Height="64">
-                            <Image Height="48" Width="48" Source="{x:Bind }"/>
+                            <Image Height="48" Width="48" />
                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="12,0,0,0">
-                                <TextBlock Text="{x:Bind }" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
-                                <TextBlock Text="{x:Bind }" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
+                                <TextBlock Text="{x:Bind Name}" Style="{ThemeResource BaseTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseHighBrush}" />
+                                <TextBlock Text="{x:Bind Date}" Style="{ThemeResource BodyTextBlockStyle}" Foreground="{ThemeResource SystemControlPageTextBaseMediumBrush}"/>
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>

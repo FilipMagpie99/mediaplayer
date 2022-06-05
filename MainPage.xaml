@@ -49,13 +49,11 @@
         </Popup>
         <TextBlock x:Name="lblStatus" HorizontalAlignment="Left" Margin="135,224,0,62"  FontSize="36" Width="404" Visibility="Visible"><Run Text="Not playing..."/></TextBlock>
         <CommandBar Grid.Row="2">
-            <AppBarButton Icon="Add" Label="powiększ" />
-            <AppBarButton Icon="Remove" Label="zmniejsz" />
-            <AppBarButton Label="satelita" >
-                <AppBarButton.Icon>
-                    <FontIcon Glyph="S" FontFamily="auto"/>
-                </AppBarButton.Icon>
-            </AppBarButton>
+            <AppBarButton Icon="Shuffle" Label="Shuffle Play" Click="AppBarButton_Click_1" />
+            <AppBarButton Icon="Play" Label="Auto Play" Click="AppBarButton_Click_2" />
+           
+
+           
             <AppBarSeparator/>
             <AppBarButton Icon="World" Label="koordynaty" Click="AppBarButton_Click" />
         </CommandBar>

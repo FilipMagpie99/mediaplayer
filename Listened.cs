@@ -8,7 +8,7 @@ namespace mediaplayer
 {
     internal class Listened
     {
-        public static List<string> historiaOdtwarzania { get; set; }
-        public static List<DateTime> kiedyOdtwarzane { get; set; }
+        public static List<string> historiaOdtwarzania { get; set; } = new List<string>();
+        public static List<DateTime> kiedyOdtwarzane { get; set; } = new List<DateTime> { DateTime.Now };
     }
 }
