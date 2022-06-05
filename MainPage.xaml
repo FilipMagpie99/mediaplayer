@@ -13,12 +13,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="67*"/>
             <RowDefinition Height="49*"/>
+            <RowDefinition Height="6,5*"/>
         </Grid.RowDefinitions>
-        <Button Content="Import" Margin="588,577,0,0" VerticalAlignment="Top" Click="Button_ClickAsync" Height="121" Grid.RowSpan="2" Width="191"/>
+        <Button Content="Import" Margin="588,507,0,0" VerticalAlignment="Top" Click="Button_ClickAsync" Height="121" Grid.RowSpan="2" Width="191"/>
         <!--<controls:DataGrid x:Name="dataGrid"  Margin="16,0,57,67"/>-->
-        <Button Name="Play" Content="Play" Margin="826,577,0,0" VerticalAlignment="Top" Visibility="Visible" Click="Button_Click" RenderTransformOrigin="1.049,-0.764" Height="120" Grid.RowSpan="2" Width="191" />
-        <Button Name="Pause" Content="Pause" Margin="826,577,0,0" VerticalAlignment="Top"  Click="Button_Click_3" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
-        <Button Name="Delete" Content="Delete" Margin="1066,577,0,0" VerticalAlignment="Top"  Click="Delete_Click" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
+        <Button Name="Play" Content="Play" Margin="826,507,0,0" VerticalAlignment="Top" Visibility="Visible" Click="Button_Click" RenderTransformOrigin="1.049,-0.764" Height="120" Grid.RowSpan="2" Width="191" />
+        <Button Name="Pause" Content="Pause" Margin="826,507,0,0" VerticalAlignment="Top"  Click="Button_Click_3" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
+        <Button Name="Delete" Content="Delete" Margin="1066,507,0,0" VerticalAlignment="Top"  Click="Delete_Click" Visibility="Collapsed"  RenderTransformOrigin="5.093,2.843" Height="121" Grid.RowSpan="2" Width="191" />
         <ListView  x:Name="listView" Tapped="listView_Tapped" Margin="588,87,244,128" Background="Goldenrod">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:MySong">
@@ -47,5 +48,16 @@
             </StackPanel>
         </Popup>
         <TextBlock x:Name="lblStatus" HorizontalAlignment="Left" Margin="135,224,0,62"  FontSize="36" Width="404" Visibility="Visible"><Run Text="Not playing..."/></TextBlock>
+        <CommandBar Grid.Row="2">
+            <AppBarButton Icon="Add" Label="powiększ" />
+            <AppBarButton Icon="Remove" Label="zmniejsz" />
+            <AppBarButton Label="satelita" >
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="S" FontFamily="auto"/>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarSeparator/>
+            <AppBarButton Icon="World" Label="koordynaty" Click="AppBarButton_Click" />
+        </CommandBar>
     </Grid>
 </Page>

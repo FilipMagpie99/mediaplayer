@@ -33,7 +33,8 @@ namespace mediaplayer
         private List<string> playerNamesIsoSto = new List<string>();
         private HashSet<string> playerPathIsoSto = new HashSet<string>();
         private List<string> playerImageIsoSto = new List<string>();
-        private List<string> historiaOdtwarzania = new List<string>();
+        //private List<string> historiaOdtwarzania = new List<string>();
+
         private ViewModel viewModel = new ViewModel();
 
         
@@ -60,9 +61,7 @@ namespace mediaplayer
                 List<string> pathes = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["listaSciezek"]);
                 List<string> imagess = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["obrazy"]);
 
-                imagess.Clear();
-                pathes.Clear();
-               nameses.Clear();
+
                
                 
 
@@ -220,9 +219,12 @@ namespace mediaplayer
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            mediaPlayer.Play();
-            Play.Visibility = Visibility.Collapsed;
-            Pause.Visibility = Visibility.Visible;
+            if (listView.SelectedItems.Count != 0)
+            {
+                mediaPlayer.Play();
+                Play.Visibility = Visibility.Collapsed;
+                Pause.Visibility = Visibility.Visible;
+            }
 
         }
 
@@ -270,8 +272,9 @@ namespace mediaplayer
                     timer.Start();
                 }
             mediaPlayer.Play();
-            if (historiaOdtwarzania.Count() != 0 && selectedSong.PathName.Equals(historiaOdtwarzania.Last())){
-                historiaOdtwarzania.Add(selectedSong.Name);
+            if (Listened.historiaOdtwarzania.Count() != 0 && selectedSong.PathName.Equals(Listened.historiaOdtwarzania.Last())){
+                Listened.historiaOdtwarzania.Add(selectedSong.Name);
+                    Listened.kiedyOdtwarzane.Add(DateTime.Now);
             }
             }
             
@@ -290,6 +293,11 @@ namespace mediaplayer
             mediaPlayer.Pause();
             lblStatus.Visibility = Visibility.Collapsed;
             Save_songs();
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(History));
         }
     }
 }
