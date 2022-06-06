@@ -15,7 +15,8 @@ namespace mediaplayer
         public string ImagePath { get; set; }
         public string playlistId;
 
-        public MySong() { 
+        public MySong() {
+               
         }
 
         public MySong(string name, string pathName, string imagePath, string playlistId)

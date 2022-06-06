@@ -49,6 +49,7 @@ namespace mediaplayer
         public MainPage()
         {
             this.InitializeComponent();
+            viewModel.filteredSongList.Clear();
             if (ApplicationData.Current.LocalSettings.Values.ContainsKey("listaPiosenek")
                 && ApplicationData.Current.LocalSettings.Values.ContainsKey("listaSciezek")
                 && ApplicationData.Current.LocalSettings.Values.ContainsKey("obrazy")
@@ -59,10 +60,10 @@ namespace mediaplayer
                 List<string> images = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["obrazy"]);
                 List<string> playlistID = JsonConvert.DeserializeObject<List<string>>((string)ApplicationData.Current.LocalSettings.Values["playlista"]);
 
-                //nameses.Clear();
-                //pathes.Clear();
-                //imagess.Clear();
-                //playlistID.Clear();
+/*                nameses.Clear();
+                pathes.Clear();
+                images.Clear();
+                playlistID.Clear();*/
                 for (int i = 0; i < nameses.Count; i++)
                 {
                     var song = nameses[i];
@@ -113,7 +114,7 @@ namespace mediaplayer
                 viewModel.songLists.Add(new MySong(playerNames, playerPath, imagePath, Playlists.selectedPlaylist.PlaylistId));
                 playerNames = null;
                 playerPath = null;
-                imagePath = null;
+                imagePath = "Assets/StoreLogo.png";
             }
         }
         private async void Button_ClickAsync(object sender, RoutedEventArgs e)
@@ -171,6 +172,7 @@ namespace mediaplayer
 
         private void closeImport_Click(object sender, RoutedEventArgs e)
         {
+           
             playerNames = nazwaUtworu.Text;
             RefreshDataGrid();
             popup.IsOpen = false;
@@ -179,14 +181,25 @@ namespace mediaplayer
         async void  timer_Tick(object sender, object e)
         {
             if (mediaPlayer.GetAsCastingSource() != null)
-            { 
-                lblStatus.Text = String.Format("{0} / {1}", mediaPlayer.Position.ToString(@"mm\:ss"), mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss"));
-                if (mediaPlayer.Position.ToString(@"mm\:ss").Equals(mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss")) && listView.SelectedIndex < viewModel.filteredSongList.Count() -1)
-                {
-                    if (czyShuffle != true)
-                        listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex + 1];
-                    else
-                        listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex + rnd.Next(-listView.SelectedIndex, viewModel.filteredSongList.Count()-listView.SelectedIndex)];
+           { 
+               lblStatus.Text = String.Format("{0} / {1}", mediaPlayer.Position.ToString(@"mm\:ss"), mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss"));
+                if (mediaPlayer.Position.ToString(@"mm\:ss").Equals(mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss")) && listView.SelectedIndex <= viewModel.filteredSongList.Count() -1 && !mediaPlayer.NaturalDuration.Duration().ToString(@"mm\:ss").Equals("00:00"))
+               {
+                   if (czyShuffle != true && listView.SelectedIndex < viewModel.filteredSongList.Count() - 1)
+                   {
+                       listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex + 1];
+                   }
+                   else if (czyShuffle != true && listView.SelectedIndex == viewModel.filteredSongList.Count() - 1)
+                   {
+                       listView.SelectedItem = viewModel.filteredSongList[0];
+                   }
+                    else if (czyShuffle == true)
+                    {
+                        var a = rnd.Next(-listView.SelectedIndex, viewModel.filteredSongList.Count() - listView.SelectedIndex);
+                        while(a == 0)
+                            a = rnd.Next(-listView.SelectedIndex, viewModel.filteredSongList.Count() - listView.SelectedIndex);
+                        listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex +a];
+                    }
                     OdtwarzanieMuzyki();
                 }
                 if(czyPauza == false)
@@ -270,6 +283,7 @@ namespace mediaplayer
         private void PlaylistNav_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(Playlists));
+            mediaPlayer.Pause();
         }
 
         private void Shuffle_Click(object sender, RoutedEventArgs e)
