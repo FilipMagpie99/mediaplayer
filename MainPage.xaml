@@ -10,16 +10,25 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Margin="0,72,0,0" Background="Black">
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions >
-        <StackPanel VerticalAlignment="Center">
+        <StackPanel Background="#0f0e0e" Width="1371">
             <StackPanel>
-                <TextBlock  Margin="0,0,0,0" TextWrapping="Wrap" Text="🎵🎵🎵MediaPlayer🎵🎵🎵"  FontSize="60" FontFamily="CourierNew" Width="900" Height="80" />
+                <TextBlock  Margin="0,0,0,0" TextWrapping="Wrap" Text="🎶 MediaPlayer ⏯️"  FontSize="60" FontFamily="CourierNew" TextAlignment="Center" Height="80" />
             </StackPanel>
-            <ListView  x:Name="listView" HorizontalAlignment="Center"   SelectionChanged="listView_SelectionChanged" Width="500" Height ="400" Margin="0,0,0,0" Background="#0f0e0e">
+            <StackPanel Margin="0,50">
+            <TextBox x:Name="sbar"  TextChanged="sbar_TextChanged" Width="990" PlaceholderText="Enter the item to search" Margin="0,0,0,0"/>
+            <Button Content="Search" Width="200" VerticalAlignment="Center" HorizontalAlignment="Center" Click="Search_Click"  Margin="0,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel VerticalAlignment="Center" Grid.Row="1">
+
+            <ListView  x:Name="listView" HorizontalAlignment="Center"   SelectionChanged="listView_SelectionChanged" Width="1371" Height ="400" Margin="0,0,0,0" Background="#0f0e0e">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:MySong">
                     <StackPanel Orientation="Horizontal" Height="64">
@@ -34,19 +43,11 @@
         </ListView>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Background="#dc143c " Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Import" Margin="0,0,0,0"  Click="Button_ClickAsync" Height="121" Grid.RowSpan="2" Width="191"/>
-            <Button Name="Play" Content="Play" Margin="0,0,0,0"   Visibility="Visible" Click="Play_Click"  Height="120" Grid.RowSpan="2" Width="191" />
-            <Button Name="Pause" Content="Pause" Margin="0,0,0,0"    Click="Pause_Click" Visibility="Collapsed"   Height="120" Grid.RowSpan="2" Width="191" />
-           
-            <StackPanel Orientation="Vertical">
-                <TextBox x:Name="sbar"  TextChanged="sbar_TextChanged" PlaceholderText="Enter the item to search" Margin="0,0,0,0"/>
+        <StackPanel Grid.Row="2" Background="#dc143c" VerticalAlignment="Center" HorizontalAlignment="Center" >
 
-                <Button Content="Search" Width="400"  Click="Search_Click"  Margin="0,0,0,0"/>
-                <TextBlock x:Name="lblStatus" VerticalAlignment="Top" Margin="0,0,0,0"  FontSize="36" Width="400" Visibility="Visible"><Run Text="Not playing..."/></TextBlock>
+            <TextBlock x:Name="lblStatus" TextAlignment="Center"  FontSize="26" Width="1371" Visibility="Visible"><Run Text="Not playing..."/></TextBlock>
+            
 
-            </StackPanel>
-            <Button Name="Delete" Content="Delete" Margin="0,0,0,0"  Click="Delete_Click" Visibility="Collapsed"   Height="120" Grid.RowSpan="2" Width="191" />
         </StackPanel>
 
         <Popup x:Name="popup" IsOpen="False">
@@ -57,17 +58,26 @@
                 <Button x:Name="importSong" Click="importSong_Click">Import Song</Button>
                 <TextBlock>Wybierz obraz</TextBlock>
                 <Button x:Name="importImage" Click="importImage_Click">Import Image</Button>
-                <Button x:Name="closeImport" Click="closeImport_Click">Zakoncz</Button>
+                <Button x:Name="closeImport" Click="closeImport_Click" >Zakoncz</Button>
             </StackPanel>
         </Popup>
         
-        <CommandBar Grid.Row="2">
-            <AppBarButton Icon="Shuffle" Label="Shuffle Play" Click="Shuffle_Click" />
-            <AppBarButton Icon="Play" Label="Auto Play" Click="Regular_Click" />
+        <CommandBar Grid.Row="3" HorizontalAlignment="Center" >
+            <AppBarButton Icon="Delete" x:Name="Delete" Label="Delete song" Content="Delete" Margin="0,0,0,0"  Click="Delete_Click" Visibility="Collapsed"     Width="191" />
+            <AppBarButton  x:Name="Placeholder"  Margin="0,0,0,0" Visibility="Visible" Width="191" />
+            <AppBarButton Icon="Add" x:Name="Add" Label="Add song" Margin="0,0,0,0"  Click="Button_ClickAsync"   Width="191"/>
             <AppBarSeparator/>
-            <AppBarButton Icon="List" Label="Historia odtwarzania" Click="HistoryNav_Click" />
+            <AppBarButton Icon="Previous" x:Name="Previous" Label="Previous" Content="Previous" Margin="0,0,0,0"  Click="Previous_Click" Visibility="Visible"   Width="191" />
+            <AppBarButton Icon="Play"  x:Name="Play" Label="Play" Content="Play" Margin="0,0,0,0"   Visibility="Visible" Click="Play_Click"    Width="191" />
+            <AppBarButton Icon="Pause" x:Name="Pause" Label="Pause" Content="Pause" Margin="0,0,0,0"    Click="Pause_Click" Visibility="Collapsed"   Width="191" />
+            <AppBarButton Icon="Next" x:Name="Next" Label="Next" Content="Pause" Margin="0,0,0,0"    Click="Next_Click" Visibility="Visible"   Width="191" />
+            <AppBarSeparator/>
+            <AppBarButton Icon="Shuffle" Label="Shuffle Play" Click="Shuffle_Click" />
+            <AppBarButton Icon="RepeatAll" Label="Auto Play" Click="Regular_Click" />
+            <AppBarSeparator/>
+            <AppBarButton Icon="List" Label="Historia" Click="HistoryNav_Click" />
             <AppBarButton Icon="MusicInfo" Label="Playlisty" Click="PlaylistNav_Click" />
         </CommandBar>
-        
+       
     </Grid>
 </Page>

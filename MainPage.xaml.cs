@@ -244,6 +244,7 @@ namespace mediaplayer
             {
                 DispatcherTimer timer = new DispatcherTimer();
                 selectedSong = listView.SelectedItem as MySong;
+                Placeholder.Visibility = Visibility.Collapsed;
                 Delete.Visibility = Visibility.Visible;
                 StorageFile file = await StorageFile.GetFileFromPathAsync(selectedSong.PathName);
 
@@ -272,6 +273,7 @@ namespace mediaplayer
             viewModel.filteredSongList.Remove(selectedSong);
             mediaPlayer.Pause();
             lblStatus.Visibility = Visibility.Collapsed;
+            
             //Save_songs();
         }
 
@@ -307,9 +309,30 @@ namespace mediaplayer
 
             listView.ItemsSource = cont;
         }
-        
+
+        private void Next_Click(object sender, RoutedEventArgs e)
+        {
+            if (listView.SelectedIndex < viewModel.filteredSongList.Count() - 1)
+            {
+                listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex + 1];
+            }
+            else
+            {
+                listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex = 0];
+            }
+        }
 
 
-
+        private void Previous_Click(object sender, RoutedEventArgs e)
+        {
+            if (listView.SelectedIndex == 0)
+            {
+                listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex = viewModel.filteredSongList.Count()-1];
+            }
+            else
+            {
+                listView.SelectedItem = viewModel.filteredSongList[listView.SelectedIndex - 1];
+            }
+        }
     }
 }
